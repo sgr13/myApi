@@ -10,7 +10,17 @@ $client = new\GuzzleHttp\Client(array(
    )
 ));
 
-$response = $client->post('/player');
+
+$nickname = 'NowyGracz' . rand(0, 999);
+$data = array(
+    'nickname' => $nickname,
+    'age' => rand(15, 65),
+    'tagLine' => 'a test dev!'
+);
+
+$response = $client->post('/player', array(
+    'body' => json_encode($data)
+));
 
 echo $response;
 
