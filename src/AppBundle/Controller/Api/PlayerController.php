@@ -42,24 +42,33 @@ class PlayerController extends Controller
         $em->persist($player);
         $em->flush();
 
+        $location = $this->generateUrl('players_show', array(
+            'nickname' => $player->getNickname()
+        ));
         $response = new Response('It worked!!!', 201);
-        $response->headers->set('Location', '/some/player/url');
+        $response->headers->set('Location', $location);  //na wypadek gdy potrzebny jest adres do nowego resources
 
         return $response;
     }
 
     /**
-     * @Route("/players/{nickname}")
+     * @Route("/players/{nickname}", name="players_show")
      * @Method("GET")
      */
     public function showAction(Player $player)
     {
+        if (!$player) {
+            throw $this->createNotFoundException('No player with that nickname!');
+        }
         $data = array(
           'nickname' => $player->getNickname(),
           'avatarNumber' => $player->getPosition(),
           'tagLine' => $player->getTagLine()
         );
 
-        return new Response(json_encode($data));
+        $response =  new Response(json_encode($data));
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
     }
 }

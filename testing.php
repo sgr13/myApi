@@ -25,10 +25,14 @@ $response = $client->post('/player', array(
     'body' => json_encode($data)
 ));
 
-$nicknameToGet = 'NowyGracz99';
+
+
+//$nicknameToGet = 'NowyGracz99';
+
+$playerUrl = $response->getHeader('Location');
 
 //2. GET to fetch the player
-$response = $client->get('/players/' . $nicknameToGet);
+$response = $client->get($playerUrl);
 
 
 echo $response;
