@@ -14,7 +14,7 @@ $client = new\GuzzleHttp\Client(array(
 $nickname = 'NowyGracz' . rand(0, 999);
 $data = array(
     'nickname' => $nickname,
-    'age' => rand(15, 65),
+    'position' => rand(1, 5),
     'tagLine' => 'a test dev!'
 );
 

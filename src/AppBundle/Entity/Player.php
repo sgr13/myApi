@@ -31,9 +31,9 @@ class Player
     /**
      * @var int
      *
-     * @ORM\Column(name="age", type="integer")
+     * @ORM\Column(name="position", type="integer")
      */
-    private $age;
+    private $position;
 
     /**
      * @var string
@@ -42,10 +42,10 @@ class Player
      */
     private $tagLine;
 
-    public function __construct($nickname = null, $age = null)
+    public function __construct($nickname = null, $position = null)
     {
         $this->nickname = $nickname;
-        $this->age = $age;
+        $this->position = $position;
     }
 
 
@@ -84,27 +84,27 @@ class Player
     }
 
     /**
-     * Set age
+     * Set position
      *
-     * @param integer $age
+     * @param string position
      *
      * @return Player
      */
-    public function setAge($age)
+    public function setPosition($position)
     {
-        $this->age = $age;
+        $this->position = $position;
 
         return $this;
     }
 
     /**
-     * Get age
+     * Get position
      *
      * @return int
      */
-    public function getAge()
+    public function getPosition()
     {
-        return $this->age;
+        return $this->position;
     }
 
     /**

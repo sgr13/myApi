@@ -10,6 +10,7 @@ namespace AppBundle\Controller\Api;
 
 
 use AppBundle\Entity\Player;
+use AppBundle\Form\PlayerType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -20,20 +21,30 @@ class PlayerController extends Controller
 {
     /**
      * @Route("/player", name="player")
-     * @Method("POST")
+     *
      */
     public function playerAction(Request $request)
     {
         $body = $request->getContent();
-        $data = json_decode($body, true); //tru zapewnia że dostaniemy tablice a nie obiekt
+        $data = json_decode($body, true); //true zapewnia że dostaniemy tablice a nie obiekt
 
-        $player = new Player($data['nickname'], $data['age']);
-        $player->setTagLine($data['tagLine']);
+//        $data = array(
+//            'nickname' => 'slavko',
+//            'position' => rand(1, 5),
+//            'tagLine' => 'a test dev!'
+//        );
+
+        $player = new Player();
+        $form = $this->createForm(new PlayerType(), $player);
+        $form->submit($data);  //zamiast zapisu form->handleRequest
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($player);
         $em->flush();
 
-        return new Response('It worked!!!');
+        $response = new Response('It worked!!!', 201);
+        $response->headers->set('Location', '/some/player/url');
+
+        return $response;
     }
 }
