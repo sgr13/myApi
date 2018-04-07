@@ -25,7 +25,11 @@ $response = $client->post('/player', array(
     'body' => json_encode($data)
 ));
 
-
+//echo $response;
+//
+//echo "\n\n";
+//
+//die;
 
 //$nicknameToGet = 'NowyGracz99';
 
@@ -33,6 +37,10 @@ $playerUrl = $response->getHeader('Location');
 
 //2. GET to fetch the player
 $response = $client->get($playerUrl);
+
+
+//3.GET a collection
+$response = $client->get('/players');
 
 
 echo $response;

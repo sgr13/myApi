@@ -14,6 +14,7 @@ use AppBundle\Form\PlayerType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -45,7 +46,10 @@ class PlayerController extends Controller
         $location = $this->generateUrl('players_show', array(
             'nickname' => $player->getNickname()
         ));
-        $response = new Response('It worked!!!', 201);
+
+        $data = $this->serializePlayer($player);
+
+        $response = new JsonResponse($data, 201);
         $response->headers->set('Location', $location);  //na wypadek gdy potrzebny jest adres do nowego resources
 
         return $response;
@@ -60,15 +64,41 @@ class PlayerController extends Controller
         if (!$player) {
             throw $this->createNotFoundException('No player with that nickname!');
         }
-        $data = array(
-          'nickname' => $player->getNickname(),
-          'avatarNumber' => $player->getPosition(),
-          'tagLine' => $player->getTagLine()
-        );
 
-        $response =  new Response(json_encode($data));
-        $response->headers->set('Content-Type', 'application/json');
+        $data = $this->serializePlayer($player);
+
+        $response =  new JsonResponse($data);
 
         return $response;
+    }
+
+    /**
+     * @Route("/players")
+     * @Method("GET")
+     */
+    public function listAction()
+    {
+        $players = $this->getDoctrine()
+            ->getRepository('AppBundle:Player')
+            ->findAll();
+
+        $data = array('players' => array());
+
+        foreach ($players as $player) {
+            $data['players'][] = $this->serializePlayer($player);
+        }
+
+        $response =  new JsonResponse($data);
+
+        return $response;
+    }
+
+    private function serializePlayer(Player $player)
+    {
+        return array(
+            'nickname' => $player->getNickname(),
+            'avatarNumber' => $player->getPosition(),
+            'tagLine' => $player->getTagLine()
+        );
     }
 }
