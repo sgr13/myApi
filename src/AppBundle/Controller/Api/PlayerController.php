@@ -47,4 +47,19 @@ class PlayerController extends Controller
 
         return $response;
     }
+
+    /**
+     * @Route("/players/{nickname}")
+     * @Method("GET")
+     */
+    public function showAction(Player $player)
+    {
+        $data = array(
+          'nickname' => $player->getNickname(),
+          'avatarNumber' => $player->getPosition(),
+          'tagLine' => $player->getTagLine()
+        );
+
+        return new Response(json_encode($data));
+    }
 }

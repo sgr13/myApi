@@ -12,15 +12,24 @@ $client = new\GuzzleHttp\Client(array(
 
 
 $nickname = 'NowyGracz' . rand(0, 999);
+
+
 $data = array(
     'nickname' => $nickname,
     'position' => rand(1, 5),
     'tagLine' => 'a test dev!'
 );
 
+//1. POST to create Player
 $response = $client->post('/player', array(
     'body' => json_encode($data)
 ));
+
+$nicknameToGet = 'NowyGracz99';
+
+//2. GET to fetch the player
+$response = $client->get('/players/' . $nicknameToGet);
+
 
 echo $response;
 
