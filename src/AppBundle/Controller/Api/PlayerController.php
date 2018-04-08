@@ -29,12 +29,6 @@ class PlayerController extends Controller
         $body = $request->getContent();
         $data = json_decode($body, true); //true zapewnia że dostaniemy tablice a nie obiekt
 
-//        $data = array(
-//            'nickname' => 'slavko',
-//            'position' => rand(1, 5),
-//            'tagLine' => 'a test dev!'
-//        );
-
         $player = new Player();
         $form = $this->createForm(new PlayerType(), $player);
         $form->submit($data);  //zamiast zapisu form->handleRequest
@@ -97,7 +91,7 @@ class PlayerController extends Controller
     {
         return array(
             'nickname' => $player->getNickname(),
-            'avatarNumber' => $player->getPosition(),
+            'position' => $player->getPosition(),
             'tagLine' => $player->getTagLine()
         );
     }

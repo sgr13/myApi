@@ -36,4 +36,26 @@ class PlayerControllerTest extends ApiTestCase
 
     }
 
+    //clever default player
+    public function testGETPlayer()
+    {
+        $this->createPlayer(array(
+            'nickname' => 'tester',
+            'position' => 4,
+            'tagLine' => 'testTagLine'
+        ));
+
+        $response = $this->client->get('/players/tester');
+        $this->assertEquals(200, $response->getStatusCode());
+        $data = $response->json();
+        $this->assertEquals(
+            array(
+                'nickname',
+                'position',
+                'tagLine'
+            ),
+            array_keys($data)
+        );
+    }
+
 }
