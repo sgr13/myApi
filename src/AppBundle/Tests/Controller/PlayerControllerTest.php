@@ -15,8 +15,7 @@ class PlayerControllerTest extends ApiTestCase
 {
     public function testPOST()
     {
-        $nickname = 'NowyGracz' . rand(0, 999);
-
+        $nickname = 'NowyGracz';
 
         $data = array(
             'nickname' => $nickname,
@@ -30,9 +29,10 @@ class PlayerControllerTest extends ApiTestCase
         ));
 
         $this->assertEquals(201, $response->getStatusCode());
-        $this->assertTrue($response->hasHeader('Location'));
+        $this->assertEquals('/players/NowyGracz', $response->getHeader('Location'));
         $finishedData = json_decode($response->getBody(), true);
         $this->assertArrayHasKey('nickname', $finishedData);
+        $this->assertEquals('NowyGracz', $data['nickname']);
 
     }
 
