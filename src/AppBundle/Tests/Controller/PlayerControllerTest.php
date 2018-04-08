@@ -47,15 +47,36 @@ class PlayerControllerTest extends ApiTestCase
 
         $response = $this->client->get('/players/tester');
         $this->assertEquals(200, $response->getStatusCode());
-        $data = $response->json();
-        $this->assertEquals(
-            array(
-                'nickname',
-                'position',
-                'tagLine'
-            ),
-            array_keys($data)
-        );
+        $this->asserter()->assertResponsePropertiesExist($response, array(
+            'nickname',
+            'position',
+            'tagLine'
+        ));
+
+        $this
+            ->asserter()
+            ->assertResponsePropertyEquals($response, 'nickname', 'tester');
+
     }
 
+    public function testGETPlayersCollection()
+    {
+        $this->createPlayer(array(
+            'nickname' => 'tester',
+            'position' => 4,
+            'tagLine' => 'testTagLine'
+        ));
+
+        $this->createPlayer(array(
+            'nickname' => 'slawek',
+            'position' => 2,
+            'tagLine' => 'testTagLine'
+        ));
+
+        $response = $this->client->get('/players');
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->asserter()->assertResponsePropertyIsArray($response, 'players');
+        $this->asserter()->assertResponsePropertyCount($response, 'players', 2);
+        $this->asserter()->assertResponsePropertyEquals($response, 'players[1].nickname', 'slawek');
+    }
 }

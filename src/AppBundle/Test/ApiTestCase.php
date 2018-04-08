@@ -37,6 +37,8 @@ class ApiTestCase extends KernelTestCase
 
     private $output;
 
+    private $responseAsserter;
+
     public static function setUpBeforeClass()
     {
         self::$staticClient = new Client(array(
@@ -235,5 +237,14 @@ class ApiTestCase extends KernelTestCase
     protected function getEntityManager()
     {
         return $this->getService('doctrine.orm.entity_manager');
+    }
+
+    protected function asserter()
+    {
+        if ($this->responseAsserter === null) {
+            $this->responseAsserter = new ResponseAsserter();
+        }
+
+        return $this->responseAsserter;
     }
 }
