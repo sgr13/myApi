@@ -11,7 +11,9 @@ class PlayerType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('nickname', 'text')
+            ->add('nickname', 'text', array(
+                'disabled' => $options['is_edit']
+            ))
             ->add('position', 'choice', array(
                 'choices' => array(
                     1 => 'Point Guard',
@@ -28,7 +30,8 @@ class PlayerType extends AbstractType
     {
         $resolver
             ->setDefaults(array(
-               'data_class' => 'AppBundle\Entity\Player'
+               'data_class' => 'AppBundle\Entity\Player',
+                'is_edit' => false
             ));
     }
 

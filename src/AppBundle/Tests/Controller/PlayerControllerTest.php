@@ -89,7 +89,7 @@ class PlayerControllerTest extends ApiTestCase
         ));
 
         $data = array(
-            'nickname' => 'slawek',
+            'nickname' => 'kewals',
             'position' => 3,
             'tagLine' => 'foo'
         );
@@ -97,10 +97,9 @@ class PlayerControllerTest extends ApiTestCase
         $response = $this->client->put('/players/slawek', array(
             'body' => json_encode($data)
         ));
-        $this->assertEquals(200, $response->getStatusCode());
 
-        $this
-            ->asserter()
-            ->assertResponsePropertyEquals($response, 'position', 3);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->asserter()->assertResponsePropertyEquals($response, 'position', 3);
+        $this->asserter()->assertResponsePropertyEquals($response, 'nickname', 'slawek');
     }
 }

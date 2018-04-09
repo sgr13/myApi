@@ -11,6 +11,7 @@ namespace AppBundle\Controller\Api;
 
 use AppBundle\Entity\Player;
 use AppBundle\Form\PlayerType;
+use AppBundle\Form\UpdatePlayerType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -96,7 +97,7 @@ class PlayerController extends Controller
             throw $this->createNotFoundException('No player with that nickname!');
         }
 
-        $form = $this->createForm(new PlayerType(), $player);
+        $form = $this->createForm(new UpdatePlayerType(), $player);
         $this->processForm($request, $form);
 
         $em = $this->getDoctrine()->getManager();
@@ -126,5 +127,12 @@ class PlayerController extends Controller
             'position' => $player->getPosition(),
             'tagLine' => $player->getTagLine()
         );
+    }
+
+    private function debug($element)
+    {
+        echo '<pre>';
+        print_r($element);
+        echo '</pre>';
     }
 }
