@@ -14,6 +14,7 @@ use AppBundle\Form\PlayerType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,12 +27,10 @@ class PlayerController extends Controller
      */
     public function playerAction(Request $request)
     {
-        $body = $request->getContent();
-        $data = json_decode($body, true); //true zapewnia że dostaniemy tablice a nie obiekt
 
         $player = new Player();
         $form = $this->createForm(new PlayerType(), $player);
-        $form->submit($data);  //zamiast zapisu form->handleRequest
+        $this->processForm($request, $form);
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($player);
@@ -85,6 +84,39 @@ class PlayerController extends Controller
         $response =  new JsonResponse($data);
 
         return $response;
+    }
+
+    /**
+     * @Route("/players/{nickname}", name="players_put")
+     * @Method("PUT")
+     */
+    public function updateAction(Player $player, Request $request)
+    {
+        if (!$player) {
+            throw $this->createNotFoundException('No player with that nickname!');
+        }
+
+        $form = $this->createForm(new PlayerType(), $player);
+        $this->processForm($request, $form);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($player);
+        $em->flush();
+
+        $data = $this->serializePlayer($player);
+
+        $response = new JsonResponse($data, 200);
+
+        return $response;
+
+    }
+
+    private function processForm(Request $request, FormInterface $form)
+    {
+        $body = $request->getContent();
+        $data = json_decode($body, true);
+
+        $form->submit($data);
     }
 
     private function serializePlayer(Player $player)
