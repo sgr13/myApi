@@ -112,6 +112,21 @@ class PlayerController extends Controller
 
     }
 
+    /**
+     * @Route("/players/{nickname}")
+     * @Method("DELETE")
+     */
+    public function deleteAction(Player $player)
+    {
+        if ($player) {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($player);
+            $em->flush();
+        }
+
+        return new Response(null, 204);
+    }
+
     private function processForm(Request $request, FormInterface $form)
     {
         $body = $request->getContent();
