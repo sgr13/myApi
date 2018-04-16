@@ -41,9 +41,9 @@ class PlayerController extends Controller
             'nickname' => $player->getNickname()
         ));
 
-        $data = $this->serializePlayer($player);
+        $json = $this->serialize($player);
 
-        $response = new JsonResponse($data, 201);
+        $response = new Response($json, 201);
         $response->headers->set('Location', $location);  //na wypadek gdy potrzebny jest adres do nowego resources
 
         return $response;
@@ -59,9 +59,9 @@ class PlayerController extends Controller
             throw $this->createNotFoundException('No player with that nickname!');
         }
 
-        $data = $this->serializePlayer($player);
+        $json = $this->serialize($player);
 
-        $response =  new JsonResponse($data);
+        $response =  new Response($json);
 
         return $response;
     }
@@ -76,13 +76,11 @@ class PlayerController extends Controller
             ->getRepository('AppBundle:Player')
             ->findAll();
 
-        $data = array('players' => array());
+        $json = array('players' => array());
 
-        foreach ($players as $player) {
-            $data['players'][] = $this->serializePlayer($player);
-        }
+        $json = $this->serialize(array('players' => $players));
 
-        $response =  new JsonResponse($data);
+        $response =  new Response($json);
 
         return $response;
     }
@@ -104,9 +102,9 @@ class PlayerController extends Controller
         $em->persist($player);
         $em->flush();
 
-        $data = $this->serializePlayer($player);
+        $json = $this->serialize($player);
 
-        $response = new JsonResponse($data, 200);
+        $response = new Response($json, 200);
 
         return $response;
 
@@ -137,13 +135,12 @@ class PlayerController extends Controller
         $form->submit($data, $clearMissing);
     }
 
-    private function serializePlayer(Player $player)
+    private function serialize($data)
     {
-        return array(
-            'nickname' => $player->getNickname(),
-            'position' => $player->getPosition(),
-            'tagLine' => $player->getTagLine()
-        );
+//        $serializer = \JMS\Serializer\SerializerBuilder::create()->build();
+//        return $serializer-
+        return $this->container->get('jms_serializer')
+            ->serialize($data, 'json');
     }
 
     private function debug($element)
