@@ -89,7 +89,7 @@ class PlayerController extends Controller
 
     /**
      * @Route("/players/{nickname}", name="players_put")
-     * @Method("PUT")
+     * @Method({"PUT", "PATCH"})
      */
     public function updateAction(Player $player, Request $request)
     {
@@ -132,7 +132,9 @@ class PlayerController extends Controller
         $body = $request->getContent();
         $data = json_decode($body, true);
 
-        $form->submit($data);
+        $clearMissing = $request->getMethod() != 'PATCH';
+
+        $form->submit($data, $clearMissing);
     }
 
     private function serializePlayer(Player $player)

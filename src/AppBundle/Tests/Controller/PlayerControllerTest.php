@@ -114,4 +114,25 @@ class PlayerControllerTest extends ApiTestCase
         $response = $this->client->delete('/players/tester');
         $this->assertEquals(204, $response->getStatusCode());
     }
+
+    public function testPATCHPlayer()
+    {
+        $this->createPlayer(array(
+            'nickname' => 'slawek',
+            'position' => 2,
+            'tagLine' => 'foo'
+        ));
+
+        $data = array(
+            'tagLine' => 'bar'
+        );
+
+        $response = $this->client->patch('/players/slawek', array(
+            'body' => json_encode($data)
+        ));
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->asserter()->assertResponsePropertyEquals($response, 'tagLine', 'bar');
+        $this->asserter()->assertResponsePropertyEquals($response, 'position', 2);
+    }
 }
