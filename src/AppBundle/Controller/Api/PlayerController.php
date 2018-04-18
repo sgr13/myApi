@@ -12,6 +12,7 @@ namespace AppBundle\Controller\Api;
 use AppBundle\Entity\Player;
 use AppBundle\Form\PlayerType;
 use AppBundle\Form\UpdatePlayerType;
+use JMS\Serializer\SerializationContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -41,9 +42,7 @@ class PlayerController extends Controller
             'nickname' => $player->getNickname()
         ));
 
-        $json = $this->serialize($player);
-
-        $response = new Response($json, 201);
+        $response = $this->createApiResponse($player, 201);
         $response->headers->set('Location', $location);  //na wypadek gdy potrzebny jest adres do nowego resources
 
         return $response;
@@ -59,9 +58,7 @@ class PlayerController extends Controller
             throw $this->createNotFoundException('No player with that nickname!');
         }
 
-        $json = $this->serialize($player);
-
-        $response =  new Response($json);
+        $response = $this->createApiResponse($player);
 
         return $response;
     }
@@ -102,9 +99,7 @@ class PlayerController extends Controller
         $em->persist($player);
         $em->flush();
 
-        $json = $this->serialize($player);
-
-        $response = new Response($json, 200);
+        $response = $this->createApiResponse($player);
 
         return $response;
 
@@ -137,10 +132,20 @@ class PlayerController extends Controller
 
     private function serialize($data)
     {
-//        $serializer = \JMS\Serializer\SerializerBuilder::create()->build();
-//        return $serializer-
+        $contex = new SerializationContext();
+        $contex->setSerializeNull(true);
+
         return $this->container->get('jms_serializer')
-            ->serialize($data, 'json');
+            ->serialize($data, 'json', $contex);
+    }
+    
+    protected function createApiResponse($data, $statusCode = 200)
+    {
+        $json = $this->serialize($data);
+        
+        return new Response($json, $statusCode, [
+            'Content-Type' => 'application/json'
+        ]);
     }
 
     private function debug($element)

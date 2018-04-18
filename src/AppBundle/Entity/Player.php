@@ -3,12 +3,14 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Player
  *
  * @ORM\Table(name="player")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\PlayerRepository")
+ * @Serializer\ExclusionPolicy("all")
  */
 class Player
 {
@@ -24,6 +26,8 @@ class Player
     /**
      * @var string
      *
+     * @Serializer\Expose
+     *
      * @ORM\Column(name="nickname", type="string", length=255, unique=true)
      */
     private $nickname;
@@ -31,12 +35,16 @@ class Player
     /**
      * @var int
      *
+     * @Serializer\Expose
+     *
      * @ORM\Column(name="position", type="integer")
      */
     private $position;
 
     /**
      * @var string
+     *
+     * @Serializer\Expose
      *
      * @ORM\Column(name="tagLine", type="string", length=255)
      */

@@ -57,6 +57,9 @@ class PlayerControllerTest extends ApiTestCase
             ->asserter()
             ->assertResponsePropertyEquals($response, 'nickname', 'tester');
 
+//        fajny debug
+//        $this->debugResponse($response);
+
     }
 
     public function testGETPlayersCollection()
