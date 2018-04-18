@@ -138,4 +138,34 @@ class PlayerControllerTest extends ApiTestCase
         $this->asserter()->assertResponsePropertyEquals($response, 'tagLine', 'bar');
         $this->asserter()->assertResponsePropertyEquals($response, 'position', 2);
     }
+
+    public function testValidationErrors()
+    {
+        $nickname = 'NowyGracz';
+
+        $data = array(
+            'position' => rand(1, 5),
+            'tagLine' => 'a test dev!'
+        );
+
+        //1. POST to create Player
+        $response = $this->client->post('/player', array(
+            'body' => json_encode($data)
+        ));
+
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->asserter()->assertResponsePropertiesExist($response, [
+            'type',
+            'title',
+            'errors'
+        ]);
+
+        $this->asserter()->assertResponsePropertyExists($response, 'errors.nickname');
+        $this->asserter()->assertResponsePropertyEquals(
+            $response,
+            'errors.nickname[0]',
+            'Please enter a clever nickname'
+        );
+        $this->asserter()->assertResponsePropertyDoesNotExist($response, 'errors.position');
+    }
 }

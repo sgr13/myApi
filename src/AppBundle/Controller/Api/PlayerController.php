@@ -34,6 +34,23 @@ class PlayerController extends Controller
         $form = $this->createForm(new PlayerType(), $player);
         $this->processForm($request, $form);
 
+        if(!$form->isValid()) {
+
+//            ustawiam header, ktory umozliwi odczytanie dump'a w terminalu
+//            header('Content-Type: cli');
+//            dump((string)$form->getErrors(true, false)); die;
+
+            $erors = $this->getErrorsFromForm($form);
+
+            $data = [
+                'type' => 'validation_error',
+                'title' => 'There was a validation error',
+                'errors' => $erors
+            ];
+
+            return new JsonResponse($data, 400);
+        }
+
         $em = $this->getDoctrine()->getManager();
         $em->persist($player);
         $em->flush();
@@ -126,7 +143,6 @@ class PlayerController extends Controller
         $data = json_decode($body, true);
 
         $clearMissing = $request->getMethod() != 'PATCH';
-
         $form->submit($data, $clearMissing);
     }
 
@@ -153,5 +169,21 @@ class PlayerController extends Controller
         echo '<pre>';
         print_r($element);
         echo '</pre>';
+    }
+
+    private function getErrorsFromForm(FormInterface $form)
+    {
+        $errors = array();
+        foreach ($form->getErrors() as $error) {
+            $errors[] = $error->getMessage();
+        }
+        foreach ($form->all() as $childForm) {
+            if ($childForm instanceof FormInterface) {
+                if ($childErrors = $this->getErrorsFromForm($childForm)) {
+                    $errors[$childForm->getName()] = $childErrors;
+                }
+            }
+        }
+        return $errors;
     }
 }
